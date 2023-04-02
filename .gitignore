@@ -1,0 +1,16 @@
+venv/
+myprojectenv/
+
+.env
+
+media/
+
+__pycache__/
+*.py[cod]
+
+notes.txt
+
+logs/
+
+# celery beat schedule file
+celerybeat-schedule
