@@ -12,10 +12,20 @@ template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/te
 static_dir   = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/static')
 
 def get_application() -> Flask:
-    app = Flask(__name__, template_folder=template_dir, static_url_path="", static_folder=static_dir)
     
+    # flask app initiate
+    app = Flask(__name__, 
+                template_folder=template_dir, 
+                static_url_path="", 
+                static_folder=static_dir)
+    
+    # secret key
     app.secret_key = config("SECRET_KEY")
 
+    # postgressql URL
+    app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URL
+
+    # loading environment variable
     if config('ENVIRONMENT') == "production":
         app.config.from_pyfile('config/production.py')
 
@@ -25,7 +35,8 @@ def get_application() -> Flask:
     else:
         app.config.from_pyfile('config/local.py')
 
-    CORS(app, support_credentials=True)
+    # bypass cors header
+    CORS(app, support_credentials=True, resources={r"/*": {"origins": settings.ALLOWED_ORIGINS}})
 
     return app
 
