@@ -1,15 +1,17 @@
-# from core.database.models import User
+from core.database.models import User
 
-# from app.main import Serializer_
+from flask_marshmallow import Marshmallow
 
-# class UserSchema(Serializer_):
+Serializer = Marshmallow()
 
-#     class Meta:
-#         model = User
-#         ordered = True
-#         load_instance = True
-#         fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
+class UserSchema(Serializer.Schema):
+
+    class Meta:
+        model = User
+        ordered = True
+        load_instance = True
+        fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
 
 
-# user_schema = UserSchema()
-# users_schema = UserSchema(many=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)

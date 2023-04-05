@@ -33,11 +33,3 @@ class Base_Model:
         return metadata_obj.tables.keys()
     
 Base = declarative_base(cls=Base_Model)
-
-
-def get_db():
-    db = session
-    try:
-        yield db
-    finally:
-        db.close()

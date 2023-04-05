@@ -7,7 +7,6 @@ from decouple import config
 
 from config import settings
 from app.api import blueprint
-# from app.service import Serialization
 
 import os
 
@@ -15,8 +14,6 @@ template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/te
 static_dir   = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/static')
 
 app = Flask(__name__)
-
-Serializer = Marshmallow(app)
 
 def get_application() -> Flask:
     
@@ -64,20 +61,20 @@ def method_not_allowed(e):
 # def root():
 #     return render_template('index.html')
 
-from core.database.models import User
-class UserSchema(Serializer.Schema):
+# from core.database.models import User
+# class UserSchema(Serializer.Schema):
 
-    class Meta:
-        model = User
-        ordered = True
-        load_instance = True
-        fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
+#     class Meta:
+#         model = User
+#         ordered = True
+#         load_instance = True
+#         fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
 
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+# user_schema = UserSchema()
+# users_schema = UserSchema(many=True)
 
-@app.route("/users", methods=["GET"])
-def users():
-    all_users = User.all()
-    return users_schema.dump(all_users)
+# @app.route("/users", methods=["GET"])
+# def users():
+#     all_users = User.all()
+#     return users_schema.dump(all_users)
