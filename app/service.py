@@ -3,7 +3,9 @@ from core.database.models import User
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple
 
-from utils.helper import ValidationException
+from utils.helper import ValidationException, generate_username
+
+import passlib.hash as _hash
 
 ID    = TypeVar("ID", "int", "str")
 
@@ -36,29 +38,29 @@ class UserCRUD:
         
         return query
 
-    # def create(self, user: UserCreate, db: Session) -> User:
-    #     """
-    #     Create a user.
-    #     """
+    def create(self, db: Session, user: dict):
+        """
+        Create a user.
+        """
 
-    #     user_query = db.query(self.model).filter(self.model.email == user['email'])
-    #     user_obj = user_query.first()
+        user_query = db.query(self.model).filter(self.model.email == user['email'])
+        user_obj = user_query.first()
 
-    #     if user_obj:
-    #         raise ValidationException({}, status.HTTP_404_NOT_FOUND, f'User already exists!')
+        if user_obj:
+            raise ValidationException({}, 400, f'User already exists!')
         
-    #     user_obj = self.model(email=user['email'], 
-    #                           password=_hash.bcrypt.hash(user['password']), 
-    #                           username=generate_username(user['name']), 
-    #                           name=user['name'],
-    #                           ip_address=user['ip_address'],
-    #                           user_agent=user['user_agent']
-    #                         )
+        user_obj = self.model(email=user['email'], 
+                              password=_hash.bcrypt.hash(user['password']), 
+                              username=generate_username(user['name']), 
+                              name=user['name'],
+                              ip_address=user['ip_address'],
+                              user_agent=user['user_agent']
+                            )
 
-    #     db.add(user_obj)
-    #     db.commit()
-    #     db.refresh(user_obj)
-    #     return user_obj
+        db.add(user_obj)
+        db.commit()
+        db.refresh(user_obj)
+        return user_obj
         
     # def update(self, user: UserUpdate, id: ID, db: Session) -> User:
     #     """
