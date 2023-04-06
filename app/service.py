@@ -3,6 +3,8 @@ from core.database.models import User
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple
 
+from utils.helper import ValidationException
+
 ID    = TypeVar("ID", "int", "str")
 
 class UserCRUD:
@@ -13,14 +15,14 @@ class UserCRUD:
     def __init__(self, model):
         self.model = model
         
-    def get_multiple(self, db: Session, limit:int = 100, offset: int = 0) -> List[User]:
+    def get_multiple(self, db: Session, limit:int = 100, offset: int = 0) -> List:
+        print(db,'oee')
         """
         Get multiple users using a query limiting flag.
         """
         query = db.query(self.model).all()[offset:offset+limit]
-        # if not query:
-        #     raise ValidationException([], status.HTTP_400_BAD_REQUEST, 'There are no users.')
-        # return parse_obj_as(List[User], query)
+        if not query:
+            raise ValidationException([], 400, 'There are no users.')
         return list(query)
 
     def get(self, db: Session, id: ID) -> Optional[User]:

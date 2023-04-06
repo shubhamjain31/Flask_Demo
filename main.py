@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
-from flask_marshmallow import Marshmallow
 
 from decouple import config
 
@@ -13,7 +12,11 @@ import os
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/templates')
 static_dir   = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/static')
 
-app = Flask(__name__)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+def internal_server_error(e):
+    return render_template("500.html"), 500
 
 def get_application() -> Flask:
     
@@ -44,37 +47,12 @@ def get_application() -> Flask:
     # bypass cors header
     CORS(app, support_credentials=True, resources={r"/*": {"origins": settings.ALLOWED_ORIGINS}})
 
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(500, internal_server_error)
+
     return app
 
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
-
-@app.errorhandler(500)
-def method_not_allowed(e):
-    return render_template("500.html"), 500
-
-
-# @app.route("/")
-# @cross_origin(supports_credentials=True)
-# def root():
-#     return render_template('index.html')
-
-# from core.database.models import User
-# class UserSchema(Serializer.Schema):
-
-#     class Meta:
-#         model = User
-#         ordered = True
-#         load_instance = True
-#         fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
-
-
-# user_schema = UserSchema()
-# users_schema = UserSchema(many=True)
-
-# @app.route("/users", methods=["GET"])
-# def users():
-#     all_users = User.all()
-#     return users_schema.dump(all_users)
+@blueprint.route("/")
+@cross_origin(supports_credentials=True)
+def root():
+    return render_template('index.html')
