@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple
 
 from utils.helper import ValidationException, generate_username
+from core.schemas.model_schema import user_schema, users_schema
 
 import passlib.hash as _hash
 
@@ -25,7 +26,7 @@ class UserCRUD:
         query = db.query(self.model).all()[offset:offset+limit]
         if not query:
             raise ValidationException([], 400, 'There are no users.')
-        return list(query)
+        return users_schema.dump(query)
 
     def get(self, db: Session, id: ID) -> Optional[User]:
         """
@@ -33,12 +34,12 @@ class UserCRUD:
         """
         query = db.query(self.model).filter(self.model.id == id).one_or_none()
         
-        # if query is None:
-        #     raise ValidationException({}, status.HTTP_404_NOT_FOUND, 'User Not Found!')
+        if query is None:
+            raise ValidationException({}, 400, 'User Not Found!')
         
-        return query
+        return user_schema.dump(query)
 
-    def create(self, db: Session, user: dict):
+    def create(self, db: Session, user: dict, ip_address: str, user_agent: str):
         """
         Create a user.
         """
@@ -53,14 +54,14 @@ class UserCRUD:
                               password=_hash.bcrypt.hash(user['password']), 
                               username=generate_username(user['name']), 
                               name=user['name'],
-                              ip_address=user['ip_address'],
-                              user_agent=user['user_agent']
+                              ip_address=ip_address,
+                              user_agent=user_agent
                             )
 
         db.add(user_obj)
         db.commit()
         db.refresh(user_obj)
-        return user_obj
+        return user_schema.dump(user_obj)
         
     # def update(self, user: UserUpdate, id: ID, db: Session) -> User:
     #     """

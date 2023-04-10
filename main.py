@@ -1,11 +1,12 @@
 from flask import Flask, request, render_template
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 
 from decouple import config
 
 from config import settings
 from app.api import blueprint
+
+from utils.helper import APIResponse, ValidationException
 
 import os
 
@@ -50,6 +51,11 @@ def get_application() -> Flask:
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
 
+    app.response_class = APIResponse
+
+
+
+    app.errorhandler(ValidationException)
     return app
 
 @blueprint.route("/")

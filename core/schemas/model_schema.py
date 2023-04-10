@@ -10,7 +10,7 @@ class UserSchema(Serializer.Schema):
         model = User
         ordered = True
         load_instance = True
-        fields = ("username", "email", "name", "password", "is_active", "profile", "date_created")
+        fields = ("id", "username", "email", "name", "password", "is_active", "profile", "date_created")
 
 
 user_schema = UserSchema()
