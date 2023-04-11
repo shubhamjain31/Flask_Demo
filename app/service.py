@@ -62,39 +62,27 @@ class UserCRUD:
         db.refresh(user_obj)
         return user_schema.dump(user_obj)
         
-    # def update(self, user: UserUpdate, id: ID, db: Session) -> User:
-    #     """
-    #     Update a user.
-    #     """
-    #     user_query = db.query(self.model).filter(self.model.id == id)
-    #     user_obj = user_query.one_or_none()
+    def update(self, user: dict, id: ID, db: Session, media: any):
+        """
+        Update a user.
+        """
+        user_query = db.query(self.model).filter(self.model.id == id)
+        user_obj = user_query.one_or_none()
 
-    #     if user_obj is None:
-    #         raise ValidationException({}, status.HTTP_404_NOT_FOUND, f'No User with this id: {id} found')
-        
-    #     update_data = user.dict(exclude_unset=True)
+        if user_obj is None:
+            raise ValidationException({}, 400, f'No User with this id: {id} found')
 
-    #     password = update_data['password']
-    #     del update_data['password']
+        password = user['password']
+        del user['password']
         
-    #     update_data['password'] =  _hash.bcrypt.hash(password)
+        user['password'] =  _hash.bcrypt.hash(password)
         
-    #     user_query.filter(self.model.id == id).update(update_data,
-    #                                                     synchronize_session=False)
-    #     db.commit()
-    #     db.refresh(user_obj)
-    #     return user_obj
+        user_query.filter(self.model.id == id).update(user,
+                                                        synchronize_session=False)
+        db.commit()
+        db.refresh(user_obj)
+        return user_schema.dump(user_obj)
     
-    # def delete(self, id: ID, db: Session) -> User:
-    #     """Delete a user."""
-    #     user_query = db.query(self.model).filter(self.model.id == id)
-    #     user_obj = user_query.one_or_none()
-        
-    #     if user_obj is None:
-    #         raise ValidationException({}, status.HTTP_404_NOT_FOUND, f'No User with this id: {id} found')
-        
-    #     user_query.delete(synchronize_session=False)
-    #     db.commit()
-    #     return {}
+    
     
 user                = UserCRUD(User) 
