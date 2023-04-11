@@ -6,7 +6,7 @@ from decouple import config
 from config import settings
 from app.api import blueprint
 
-from utils.helper import APIResponse, ValidationException
+from utils.helper import APIResponse
 
 import os
 
@@ -53,9 +53,6 @@ def get_application() -> Flask:
 
     app.response_class = APIResponse
 
-
-
-    app.errorhandler(ValidationException)
     return app
 
 @blueprint.route("/")

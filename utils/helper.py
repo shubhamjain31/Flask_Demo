@@ -2,10 +2,10 @@ import random
 from flask import Response, jsonify
 
 class ValidationException(Exception):
-    def __init__(self, data, status_code, msg):
+    def __init__(self, data, status_code, msssage):
         self.data = data
         self.status_code = status_code
-        self.msg = msg
+        self.msssage = msssage
 
 def generate_username(name):
     first_letter = name[0][0]

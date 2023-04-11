@@ -19,7 +19,6 @@ class UserCRUD:
         self.model = model
         
     def get_multiple(self, db: Session, limit:int = 100, offset: int = 0) -> List:
-        print(db,'oee')
         """
         Get multiple users using a query limiting flag.
         """
