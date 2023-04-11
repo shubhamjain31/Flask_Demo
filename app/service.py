@@ -83,6 +83,16 @@ class UserCRUD:
         db.refresh(user_obj)
         return user_schema.dump(user_obj)
     
-    
+    def delete(self, id: ID, db: Session) -> User:
+        """Delete a user."""
+        user_query = db.query(self.model).filter(self.model.id == id)
+        user_obj = user_query.one_or_none()
+        
+        if user_obj is None:
+            raise ValidationException({}, 400, f'No User with this id: {id} found')
+        
+        user_query.delete(synchronize_session=False)
+        db.commit()
+        return {}
     
 user                = UserCRUD(User) 

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, request
 
 from core.database.connection import session
 from app.service import user
@@ -28,3 +28,8 @@ def edit_user(userId: str):
     data = request.form.to_dict()
     response = user.update(id=userId, db=session, user=data, media=request.files)
     return {"status":200, "message":'User Updated!', "data": response}
+
+@blueprint.route("/delete-user/<userId>", methods=["DELETE"])
+def delete_user(userId: str):
+    response = user.delete(id=userId, db=session)
+    return {"status":200, "message":'User Deleted!', "data": response}
