@@ -14,39 +14,32 @@ class UserSchema(Serializer.Schema):
         fields = ("id", "username", "email", "name", "password", "is_active", "profile", "date_created")
 
     @post_dump
-    def change_none_to_string(cls, data, **kwargs):
-        # fields = cls.fields
-        # print(fields)
-        # field_map = {
-        #     "str": "",
-        #     "int": 0,
-        #     "float": 0.0,
-        #     "list": [],
-        #     "dict": {},
-        #     "bool": False,
-        #     "datetime": ""
-        # }
+    def change_none_values(cls, data, **kwargs):
+        fields = cls.Meta.model.__dict__.get('__table__').columns
+        
+        field_map = {
+            "VARCHAR": "",
+            "INTEGER": 0,
+            "FLOAT": 0.0,
+            "JSON": {},
+            "BOOLEAN": False,
+            "DATETIME": ""
+        }
 
-        # field_type = {}
+        field_type = {}
 
-        # for field in fields.items():
-        #     field_type.update({field[0]: field[1]._bind_to_schema.__name__})
+        for field in fields:
+            type_ = str(field.type).split("(")
+            field_type.update({field.name: type_[0]})
 
-        # print(field_type)
+        for key, value in data.items():
 
-        # for key, value in data.items():
-
-        #     try:
-        #         if not value:
-        #             data[key] = field_map[field_type[key]]
-        #     except KeyError:
-        #         pass
-        # return data
-        for field in data:
-            if data[field] is None:
-                data[field] = ""
+            try:
+                if not value:
+                    data[key] = field_map[field_type[key]]
+            except KeyError:
+                pass
         return data
-
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
