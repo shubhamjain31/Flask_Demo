@@ -31,3 +31,14 @@ class User(BaseModel, Base):
     
     def __repr__(self):
         return self.username
+    
+class Token(Base):
+    __tablename__ = "token"
+
+    id              = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    email           = Column(String(100), unique=True)
+    token           = Column(String(255))
+    user_id         = Column(String(100))
+
+    def __repr__(self):
+        return self.email

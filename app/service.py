@@ -1,14 +1,57 @@
-from core.database.models import User
+from core.database.models import User, Token
 
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple
 
 from utils.helper import ValidationException, generate_username
 from core.schemas.model_schema import user_schema, users_schema
+from app.authentication import signJWT, decodeJWT
 
 import passlib.hash as _hash
 
 ID    = TypeVar("ID", "int", "str")
+
+class UserToken:
+    """
+    user token.
+    """
+
+    def __init__(self, model: Type[List]):
+        self.model = model
+
+    def get(self, db: Session, email: str):
+        """
+        Get specific token using query.
+        """
+        query = db.query(self.model).filter(self.model.email == email).one_or_none()
+        
+        if query is None:
+            return None
+
+        return {'access_token': query.token}
+    
+    def create(self, token: str, id: str, email: str, db: Session):
+        
+        token_obj = self.model(email=email, 
+                              user_id=id, 
+                              token=token
+                            )
+
+        db.add(token_obj)
+        db.commit()
+        db.refresh(token_obj)
+    
+    def delete(self, token: str, db: Session):
+        """Delete a token."""
+        token_query = db.query(self.model).filter(self.model.token == token)
+        token_obj = token_query.one_or_none()
+        
+        if token_obj is None:
+            return False
+        
+        token_query.delete(synchronize_session=False)
+        db.commit()
+        return True
 
 class UserCRUD:
     """
@@ -94,5 +137,60 @@ class UserCRUD:
         user_query.delete(synchronize_session=False)
         db.commit()
         return {}
+    
+class UserAuthentication:
+    """
+    user authentication process.
+    """
+
+    def __init__(self, model):
+        self.model = model
+
+    # def check_user(self, user: UserLogin, db: Session) -> Tuple[bool, str]:
+    #     user_obj = db.query(self.model).filter_by(email=user.email).first()
+
+    #     exists = user_obj is not None and user_obj.verify_password(user.password)
+
+    #     if exists:
+    #         return (True, user_obj.id)
+    #     return (False, None)
+        
+    def login(self, user: dict, db: Session):
+
+        is_valid_user, id = self.check_user(user, db)
+
+        if not is_valid_user:
+            raise ValidationException({}, 400, "Wrong login details!")
+
+        check_token = UserToken(Token).get(db, user.email)
+
+        # check if token is not expired and user is already has token or check token exists for new user
+        if check_token is not None:
+
+            # check if token is expired or not
+            try:
+                payload = decodeJWT(check_token['access_token'])
+            except:
+                payload = None
+
+            # if token is expired then delete token object
+            if payload is None:
+                UserToken(Token).delete(check_token['access_token'], db)
+            else:
+                return check_token
+        
+        res = signJWT(str(id), user.email)
+
+        # create user token
+        UserToken(models.Token).create(res['access_token'], id, user.email, db)
+        return res
+
+    # def logout(self, token: str, db: Session) -> Optional[User]:
+    #     token_obj = UserToken(models.Token).delete(token, db)
+
+    #     if token_obj:
+    #         return {}
+    #     else:
+    #         raise ValidationException({}, status.HTTP_400_BAD_REQUEST, "Already Logout!")
     
 user                = UserCRUD(User) 

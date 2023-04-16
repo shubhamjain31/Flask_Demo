@@ -23,7 +23,7 @@ def token_required(f):
             # decoding the payload to fetch the stored details
             data = jwt.decode(token, config['SECRET_KEY'])
             current_user = User.query\
-                .filter_by(public_id = data['public_id'])\
+                .filter_by(email = data['email'])\
                 .first()
         except:
             return {"status":401, "message":'Token is invalid !!', "data": {}}, 401

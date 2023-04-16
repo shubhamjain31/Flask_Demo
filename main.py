@@ -8,7 +8,7 @@ from app.api import blueprint
 
 from utils.helper import APIResponse
 
-import os
+import os, flask_login
 
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/templates')
 static_dir   = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/static')
@@ -52,6 +52,9 @@ def get_application() -> Flask:
     app.register_error_handler(500, internal_server_error)
 
     app.response_class = APIResponse
+
+    login_manager = flask_login.LoginManager()
+    login_manager.init_app(app)
 
     return app
 

@@ -7,6 +7,10 @@ from utils.decorators import token_required
 
 blueprint = Blueprint("auth", __name__, url_prefix="/api")
 
+@blueprint.route('/login', methods=['GET'])
+def login():
+    return 'welcome %s' % 'name'
+
 @blueprint.route("/users", methods=["GET"])
 @token_required
 def users():
