@@ -1,19 +1,21 @@
 from flask import Blueprint, request
 
 from core.database.connection import session
-from app.service import user
+from app.service import user, authenticate
 
 from utils.decorators import token_required
 
 blueprint = Blueprint("auth", __name__, url_prefix="/api")
 
-@blueprint.route('/login', methods=['GET'])
+@blueprint.route('/login', methods=['POST'])
 def login():
-    return 'welcome %s' % 'name'
+    data = request.get_json()
+    response = authenticate.login(user=data, db=session)
+    return {"status":200, "message":'Login Successfully!', "data": response}, 200
 
 @blueprint.route("/users", methods=["GET"])
 @token_required
-def users():
+def users(current_user):
     # all_users = session.query(User).all()
     # return users_schema.dump(all_users)
     response = user.get_multiple(db=session)

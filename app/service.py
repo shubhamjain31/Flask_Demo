@@ -146,14 +146,15 @@ class UserAuthentication:
     def __init__(self, model):
         self.model = model
 
-    # def check_user(self, user: UserLogin, db: Session) -> Tuple[bool, str]:
-    #     user_obj = db.query(self.model).filter_by(email=user.email).first()
+    def check_user(self, user: dict, db: Session) -> Tuple[bool, str]:
+        print(user)
+        user_obj = db.query(self.model).filter_by(email=user['email']).first()
 
-    #     exists = user_obj is not None and user_obj.verify_password(user.password)
+        exists = user_obj is not None and user_obj.verify_password(user['password'])
 
-    #     if exists:
-    #         return (True, user_obj.id)
-    #     return (False, None)
+        if exists:
+            return (True, user_obj.id)
+        return (False, None)
         
     def login(self, user: dict, db: Session):
 
@@ -162,7 +163,7 @@ class UserAuthentication:
         if not is_valid_user:
             raise ValidationException({}, 400, "Wrong login details!")
 
-        check_token = UserToken(Token).get(db, user.email)
+        check_token = UserToken(Token).get(db, user['email'])
 
         # check if token is not expired and user is already has token or check token exists for new user
         if check_token is not None:
@@ -179,10 +180,10 @@ class UserAuthentication:
             else:
                 return check_token
         
-        res = signJWT(str(id), user.email)
+        res = signJWT(str(id), user['email'])
 
         # create user token
-        UserToken(models.Token).create(res['access_token'], id, user.email, db)
+        UserToken(Token).create(res['access_token'], id, user['email'], db)
         return res
 
     # def logout(self, token: str, db: Session) -> Optional[User]:
@@ -194,3 +195,4 @@ class UserAuthentication:
     #         raise ValidationException({}, status.HTTP_400_BAD_REQUEST, "Already Logout!")
     
 user                = UserCRUD(User) 
+authenticate        = UserAuthentication(User) 

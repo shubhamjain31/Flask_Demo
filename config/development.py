@@ -16,5 +16,7 @@ class Settings(object):
     POSTGRES_HOSTNAME       = ""
     DATABASE_URL            = ""
     ALLOWED_ORIGINS         = []
+    ALGORITHM               = "HS256"
+    API_USER_EMAIL          = []
 
 settings = Settings()

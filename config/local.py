@@ -19,5 +19,7 @@ class Settings(object):
     MAIL_PORT               = 587
     MAIL_SERVER             = "smtp.gmail.com"
     MAIL_FROM_NAME          = "Demo"
+    ALGORITHM               = "HS256"
+    API_USER_EMAIL          = ["admin@email.com"]
 
 settings = Settings()
