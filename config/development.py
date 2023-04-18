@@ -16,7 +16,13 @@ class Settings(object):
     POSTGRES_HOSTNAME       = ""
     DATABASE_URL            = ""
     ALLOWED_ORIGINS         = []
+    MAIL_PORT               = 587
+    MAIL_SERVER             = "smtp.gmail.com"
+    MAIL_FROM_NAME          = "Demo"
     ALGORITHM               = "HS256"
     API_USER_EMAIL          = []
+    MAIL_USERNAME: str      = ""
+    MAIL_PASSWORD: str      = ""
+    MAIL_FROM: str          = ""
 
 settings = Settings()
