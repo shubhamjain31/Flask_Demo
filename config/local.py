@@ -21,5 +21,8 @@ class Settings(object):
     MAIL_FROM_NAME          = "Demo"
     ALGORITHM               = "HS256"
     API_USER_EMAIL          = ["admin@email.com"]
+    MAIL_USERNAME: str      = config("MAIL_USERNAME")
+    MAIL_PASSWORD: str      = config("MAIL_PASSWORD")
+    MAIL_FROM: str          = config("MAIL_FROM")
 
 settings = Settings()

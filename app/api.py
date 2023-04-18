@@ -22,7 +22,8 @@ def users(current_user):
     return {"status":200, "message":'All User!', "data": response}, 200
 
 @blueprint.route("/user/<userId>", methods=["GET"])
-def user_(userId: str):
+@token_required
+def user_(current_user, userId: str):
     response = user.get(id=userId, db=session)
     return {"status":200, "message":'Specific User!', "data": response}, 200
 
@@ -33,12 +34,14 @@ def create_user():
     return {"status":201, "message":'User Added!', "data": response}, 200
 
 @blueprint.route("/edit-user/<userId>", methods=["PUT"])
-def edit_user(userId: str):
+@token_required
+def edit_user(current_user, userId: str):
     data = request.form.to_dict()
     response = user.update(id=userId, db=session, user=data, media=request.files)
     return {"status":200, "message":'User Updated!', "data": response}, 200
 
 @blueprint.route("/delete-user/<userId>", methods=["DELETE"])
-def delete_user(userId: str):
+@token_required
+def delete_user(current_user, userId: str):
     response = user.delete(id=userId, db=session)
     return {"status":200, "message":'User Deleted!', "data": response}, 200

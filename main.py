@@ -32,6 +32,14 @@ def get_application() -> Flask:
 
     app.register_blueprint(blueprint)
 
+    app.config.update(
+        MAIL_SERVER         = settings.MAIL_SERVER,
+        MAIL_PORT           = settings.MAIL_PORT,
+        MAIL_USE_TLS        = True,
+        MAIL_USERNAME       = settings.MAIL_USERNAME,
+        MAIL_PASSWORD       = settings.MAIL_PASSWORD
+    )
+
     # postgressql URL
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URL
 
