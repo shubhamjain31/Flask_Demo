@@ -6,7 +6,7 @@ from decouple import config
 from config import settings
 from app.api import blueprint
 
-from utils.helper import APIResponse
+from utils.helper import APIResponse, mail
 
 import os
 
@@ -31,6 +31,7 @@ def get_application() -> Flask:
     app.secret_key = config("SECRET_KEY")
 
     app.register_blueprint(blueprint)
+    print(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
 
     app.config.update(
         MAIL_SERVER         = settings.MAIL_SERVER,
@@ -60,6 +61,8 @@ def get_application() -> Flask:
     app.register_error_handler(500, internal_server_error)
 
     app.response_class = APIResponse
+
+    mail.init_app(app)
 
     return app
 

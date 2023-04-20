@@ -4,6 +4,7 @@ from core.database.connection import session
 from app.service import user, authenticate
 
 from utils.decorators import token_required
+from utils.helper import send_email
 
 blueprint = Blueprint("auth", __name__, url_prefix="/api")
 
@@ -19,12 +20,25 @@ def users(current_user):
     # all_users = session.query(User).all()
     # return users_schema.dump(all_users)
     response = user.get_multiple(db=session)
+    template = """
+        <html>
+        <body>
+         
+        <p>Hi !!!
+        <br>Thanks for the registration!!!</p>
+ 
+        </body>
+        </html>
+        """
+    message = ""
+    send_email(, "Welcome TO Demo")
     return {"status":200, "message":'All User!', "data": response}, 200
 
 @blueprint.route("/user/<userId>", methods=["GET"])
 @token_required
 def user_(current_user, userId: str):
     response = user.get(id=userId, db=session)
+    send_email()
     return {"status":200, "message":'Specific User!', "data": response}, 200
 
 @blueprint.route("/create-user", methods=["POST"])

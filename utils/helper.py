@@ -1,5 +1,9 @@
 import random
 from flask import Response, jsonify
+from flask_mail import Mail
+from config import settings
+
+mail    = Mail()
 
 class ValidationException(Exception):
     def __init__(self, data, status_code, msssage):
@@ -20,3 +24,14 @@ class APIResponse(Response):
         if isinstance(rv, dict):
             rv = jsonify(rv)
         return super(APIResponse, cls).force_type(rv, environ)
+    
+def send_email():
+    message = "<b>testing</b>"
+    subject =  "New User"
+
+    msg = mail.send_message(
+        subject=subject,
+        sender=settings.MAIL_FROM,
+        recipients=[settings.MAIL_FROM],
+        body=message
+    )
