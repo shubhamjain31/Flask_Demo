@@ -25,13 +25,13 @@ class APIResponse(Response):
             rv = jsonify(rv)
         return super(APIResponse, cls).force_type(rv, environ)
     
-def send_email():
-    message = "<b>testing</b>"
-    subject =  "New User"
+def send_email(message, template, subject, emails):
 
-    msg = mail.send_message(
+    mail.send_message(
         subject=subject,
         sender=settings.MAIL_FROM,
-        recipients=[settings.MAIL_FROM],
-        body=message
+        recipients=emails,
+        body=message,
+        html=template
     )
+    return
