@@ -46,7 +46,7 @@ def create_user():
         """
     message = ""
     send_email(message, template, "Welcome TO Demo", [response.email])
-    return {"status":201, "message":'User Added!', "data": response}, 200
+    return {"status":201, "message":'User Added!', "data": response}, 201
 
 @blueprint.route("/edit-user/<userId>", methods=["PUT"])
 @token_required
