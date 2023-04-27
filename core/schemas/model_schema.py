@@ -41,5 +41,5 @@ class UserSchema(Serializer.Schema):
                 pass
         return data
 
-user_schema = UserSchema()
+user_schema  = UserSchema()
 users_schema = UserSchema(many=True)
