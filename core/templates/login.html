@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>Admin</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", "sans-serif";
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #3f3f3f;
+        }
+
+        .container {
+            position: relative;
+            max-width: 430px;
+            width: 100%;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .container .forms {
+            width: 200%;
+            display: flex;
+            height: 440px;
+            align-items: center;
+            transition: height 0.4s ease;
+        }
+
+        .container .form {
+            width: 50%;
+            padding: 30px;
+            border-radius: 12px;
+            background: #fff;
+            transition: margin-left 0.36s ease;
+        }
+
+        .container.active .login {
+            margin-left: -50%;
+            opacity: 0;
+            transition: margin-left 0.36s ease, opacity 0.3s ease;
+        }
+
+        .container .signup {
+            opacity: 0;
+            transition: opacity 0.18s ease;
+        }
+
+        .container.active .signup {
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        .container.active .forms {
+            height: 600px;
+        }
+
+        .container .form .title {
+            position: relative;
+            font-size: 27px;
+            font-weight: 600;
+        }
+
+        .form .title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 3px;
+            width: 30px;
+            background-color: #F59D0E;
+            border-radius: 25px;
+        }
+
+        .form .input-field {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .input-field input {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            padding: 0 35px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            border-bottom: 2px solid #ccc;
+            border-top: 2px solid transparent;
+            transition: border-bottom-color 0.4s ease;
+        }
+
+        .input-field input:is(:focus, :valid) {
+            border-bottom-color: #F59D0E;
+        }
+
+        .input-field i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 23px;
+            transition: color 0.4s ease;
+        }
+
+        .input-field input:is(:focus, :valid)~i {
+            color: #F59D0E;
+        }
+
+        .input-field i.icon {
+            left: 0;
+        }
+
+        .input-field i.showHidePw {
+            right: 0;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .form .checkbox-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .checkbox-text .checkbox-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-content input {
+            margin: 0 8px -2px 4px;
+            accent-color: #F59D0E;
+        }
+
+        .form .text {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form a.text {
+            color: #F59D0E;
+            text-decoration: none;
+        }
+
+        .form a {
+            text-decoration: none;
+        }
+
+        .form a:hover {
+            text-decoration: underline;
+        }
+
+        .group {
+            text-align: center;
+        }
+
+        .form button {
+            width: 300px;
+            height: 45px;
+            outline: none;
+            border: none;
+            background-color: #F59D0E;
+            color: #fff;
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .group button span {
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .group button span:after {
+            content: "\00bb";
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -20px;
+            transition: 0.5s;
+        }
+
+        .group button:hover span {
+            padding-right: 25px;
+        }
+
+        .group button:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+
+        .group button:hover {
+            cursor: pointer;
+        }
+
+        .form button {
+            margin-top: 35px;
+        }
+
+        .form .login-signup {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .bad-credentials {
+            /* 2 animations: shake, and glow red */
+            animation-name: shake, glow-red;
+            animation-duration: 0.7s, 0.35s;
+            animation-iteration-count: 1, 2;
+            }
+
+            @keyframes shake {
+                0%, 20%, 40%, 60%, 80% {
+                    transform: translateX(8px);
+                }
+                10%, 30%, 50%, 70%, 90% {
+                    transform: translateX(-8px);
+                }
+            }
+
+            @keyframes glow-red {
+            50% {
+                border-color: indianred;
+            }
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="forms">
+            <div class="form login">
+                <span class="title">Login</span>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{category}} alert-dismissible fade show">
+                            {{message}}
+                            <a href="#" class="btn-close " data-bs-dismiss="alert">x</a>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form action="/admin/login" method="post">
+                    <div class="input-field {{user_error}}">
+                        <input type="email" name="email" placeholder="Enter your email" value="{{email}}">
+                        <i class="uil uil-user"></i>
+                    </div>
+
+                    <div class="input-field {{pass_error}}">
+                        <input type="password" name="password" class="password" placeholder="Enter your password">
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <!-- <input type="checkbox" id="logCheck">
+                            <label for="logCheck" class="text">Remember me</label> -->
+                        </div>
+
+                        <a href="#" class="text">Forgot password?</a>
+                    </div>
+
+                    <div class="group">
+                        <button type="submit" class="log-btn"><span>Login</span></button>
+                    </div>
+                </form>
+
+                <!-- <div class="login-signup">
+                    <span class="text">Not a member?
+                        <a href="#" class="text signup-link">Signup now</a>
+                    </span>
+                </div> -->
+            </div>
+
+
+            <div class="form signup">
+                <span class="title">Registration</span>
+
+                <form action="#">
+                    <div class="input-field">
+                        <input type="text" placeholder="Enter your name" required>
+                        <i class="uil uil-user"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" placeholder="Enter your email" required>
+                        <i class="uil uil-envelope"></i>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="password" placeholder="Create a password" required>
+                        <i class="uil uil-lock icon"></i>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" class="password" placeholder="Confirm a password" required>
+                        <i class="uil uil-lock icon"></i>
+                        <i class="uil uil-eye-slash showHidePw"></i>
+                    </div>
+
+                    <div class="checkbox-text">
+                        <div class="checkbox-content">
+                            <input type="checkbox" id="signCheck">
+                            <label for="signCheck" class="text">I accept all terms & conditions</label>
+                        </div>
+                    </div>
+
+                    <div class="group">
+                        <button type="submit" class="log-btn"><span>Register</span></button>
+                    </div>
+                </form>
+
+                <div class="login-signup">
+                    <span class="text">Already have an account?
+                        <a href="#" class="text login-link">Login now</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const container = document.querySelector(".container"),
+            pwShowHide = document.querySelectorAll(".showHidePw"),
+            pwFields = document.querySelectorAll(".password"),
+            signup = document.querySelector(".signup-link"),
+            login = document.querySelector(".login-link");
+
+        pwShowHide.forEach(eyeIcon => {
+            eyeIcon.addEventListener("click", () => {
+                pwFields.forEach(pwField => {
+                    if (pwField.type === "password") {
+                        pwField.type = "text";
+
+                        pwShowHide.forEach(icon => {
+                            icon.classList.replace("uil-eye-slash", "uil-eye");
+                        })
+                    } else {
+                        pwField.type = "password";
+
+                        pwShowHide.forEach(icon => {
+                            icon.classList.replace("uil-eye", "uil-eye-slash");
+                        })
+                    }
+                })
+            })
+        })
+
+        signup.addEventListener("click", () => {
+            container.classList.add("active");
+        })
+
+        login.addEventListener("click", () => {
+            container.classList.remove("active");
+        })
+        
+    </script>
+    
+</body>
+</html>

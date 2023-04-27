@@ -1,6 +1,7 @@
 from sqlalchemy import TIMESTAMP, Column, String, Integer, DateTime, ForeignKey, Boolean, Text, JSON, Float
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import UUID
+from flask_login import UserMixin
 
 from core.database.connection import Base
 
@@ -13,7 +14,7 @@ class BaseModel(Base):
     ip_address      = Column(String(255))
     user_agent      = Column(Text)
 
-class User(BaseModel, Base):
+class User(BaseModel, Base, UserMixin):
     __tablename__ = "users"
 
     id              = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
