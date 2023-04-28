@@ -1,7 +1,7 @@
 from core.database.models import User, Token
 
 from sqlalchemy.orm import Session
-from typing import List, Optional, Type, TypeVar, Tuple
+from typing import List, Optional, Type, TypeVar, Tuple, Dict
 
 from utils.helper import ValidationException, generate_username
 from core.schemas.model_schema import user_schema, users_schema
@@ -71,7 +71,7 @@ class UserCRUD:
             raise ValidationException([], 400, 'There are no users.')
         return users_schema.dump(query)
 
-    def get(self, tbl: Session, id: ID) -> Optional[User]:
+    def get(self, tbl: Session, id: ID) -> Optional[Dict]:
         """
         Get specific user using query.
         """
@@ -82,7 +82,7 @@ class UserCRUD:
         
         return user_schema.dump(query)
 
-    def create(self, tbl: Session, user: dict, ip_address: str, user_agent: str):
+    def create(self, tbl: Session, user: dict, ip_address: str, user_agent: str) -> Dict:
         """
         Create a user.
         """
@@ -106,7 +106,7 @@ class UserCRUD:
         tbl.refresh(user_obj)
         return user_schema.dump(user_obj)
         
-    def update(self, user: dict, id: ID, tbl: Session, media: any):
+    def update(self, user: dict, id: ID, tbl: Session, media: any) -> Dict:
         """
         Update a user.
         """
@@ -127,7 +127,7 @@ class UserCRUD:
         tbl.refresh(user_obj)
         return user_schema.dump(user_obj)
     
-    def delete(self, id: ID, tbl: Session) -> User:
+    def delete(self, id: ID, tbl: Session) -> Dict:
         """Delete a user."""
         user_query = tbl.query(self.model).filter(self.model.id == id)
         user_obj = user_query.one_or_none()
@@ -140,6 +140,22 @@ class UserCRUD:
         user_query.delete(synchronize_session=False)
         tbl.commit()
         return {}
+    
+    def change_password(self, user: dict, id: ID, tbl: Session) -> Dict:
+        """
+        Update a user password.
+        """
+        user_query = tbl.query(self.model).filter(self.model.id == id)
+        user_obj = user_query.one_or_none()
+
+        if user_obj is None:
+            raise ValidationException({}, 400, f'No User with this id: {id} found')
+        
+        user_query.filter(self.model.id == id).update({"password": _hash.bcrypt.hash(user['password'])},
+                                                        synchronize_session=False)
+        tbl.commit()
+        tbl.refresh(user_obj)
+        return user_schema.dump(user_obj)
     
 class UserAuthentication:
     """

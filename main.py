@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, render_template
 from flask_cors import CORS, cross_origin
 
 from decouple import config
@@ -31,7 +31,6 @@ def get_application() -> Flask:
     app.secret_key = config("SECRET_KEY")
 
     app.register_blueprint(blueprint)
-    print(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
 
     app.config.update(
         MAIL_SERVER         = settings.MAIL_SERVER,

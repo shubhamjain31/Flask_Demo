@@ -61,9 +61,9 @@ def delete_user(current_user, userId: str):
     response = user.delete(id=userId, tbl=session)
     return {"status":200, "message":'User Deleted!', "data": response}, 200
 
-# @blueprint.route("/change-password/<userId>", methods=["PATCH"])
-# @token_required
-# def password_change(current_user, userId: str):
-#     data = request.get_json()
-#     response = user.change_password(user=data, id=userId,  tbl=session)
-#     return {"status":200, "message":'Password Changed!', "data": response}, 200
+@blueprint.route("/change-password/<userId>", methods=["PATCH"])
+@token_required
+def password_change(current_user, userId: str):
+    data = request.get_json()
+    response = user.change_password(user=data, id=userId,  tbl=session)
+    return {"status":200, "message":'Password Changed!', "data": response}, 200
