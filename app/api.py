@@ -26,7 +26,6 @@ def users(current_user):
 @token_required
 def user_(current_user, userId: str):
     response = user.get(id=userId, tbl=session)
-    # send_email()
     return {"status":200, "message":'Specific User!', "data": response}, 200
 
 @blueprint.route("/create-user", methods=["POST"])
@@ -67,3 +66,9 @@ def password_change(current_user, userId: str):
     data = request.get_json()
     response = user.change_password(user=data, id=userId,  tbl=session)
     return {"status":200, "message":'Password Changed!', "data": response}, 200
+
+@blueprint.route("/logout", methods=["GET"])
+@token_required
+def user_logout(current_user: str):
+    response = authenticate.logout(user_=current_user, tbl=session)
+    return {"status":200, "message":'User Logout Successfully!', "data": response}, 200

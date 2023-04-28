@@ -42,9 +42,9 @@ class UserToken:
         tbl.commit()
         tbl.refresh(token_obj)
     
-    def delete(self, token: str, tbl: Session):
+    def delete(self, email: str, tbl: Session) -> bool:
         """Delete a token."""
-        token_query = tbl.query(self.model).filter(self.model.token == token)
+        token_query = tbl.query(self.model).filter(self.model.email == email)
         token_obj = token_query.one_or_none()
         
         if token_obj is None:
@@ -205,13 +205,13 @@ class UserAuthentication:
         UserToken(Token).create(res['access_token'], id, user['email'], tbl)
         return res
 
-    # def logout(self, token: str, tbl: Session) -> Optional[User]:
-    #     token_obj = UserToken(models.Token).delete(token, tbl)
+    def logout(self, user_: str, tbl: Session) -> Optional[Dict]:
+        token_obj = UserToken(Token).delete(user_.email, tbl)
 
-    #     if token_obj:
-    #         return {}
-    #     else:
-    #         raise ValidationException({}, status.HTTP_400_BAD_REQUEST, "Already Logout!")
+        if token_obj:
+            return {}
+        else:
+            raise ValidationException({}, 400, "Already Logout!")
     
 user                = UserCRUD(User) 
 authenticate        = UserAuthentication(User) 
