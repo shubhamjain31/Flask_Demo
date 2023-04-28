@@ -16,11 +16,28 @@ class LogoutMenuLink(MenuLink):
     def is_accessible(self):
         return adminLogin.current_user.is_authenticated    
     
+class DefaultModelView(ModelView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def is_accessible(self):
+        return adminLogin.current_user.is_authenticated and adminLogin.current_user.is_active
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('admin.login', next=request.url))
+    
 class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return adminLogin.current_user.is_authenticated and adminLogin.current_user.is_active
+    
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('admin.login', next=request.url))
 
     @expose('/')
     def index(self):
-        if not adminLogin.current_user.is_authenticated:
+        if not adminLogin.current_user.is_authenticated and adminLogin.current_user.is_active:
             return redirect(url_for('admin.login'))
         return super(MyAdminIndexView,self).index()
         
@@ -40,7 +57,7 @@ class MyAdminIndexView(AdminIndexView):
             return redirect(url_for('admin.index'))
         
     @expose('/logout')
-    @adminLogin.login_required
+    # @adminLogin.login_required
     def logout(self):
         adminLogin.logout_user()
         return redirect(url_for('admin.login'))   
@@ -49,6 +66,6 @@ def admin_panel(app):
     # admin = Admin(app, name='APIS', template_mode='bootstrap3', endpoint="admin")
     admin = Admin(app, name='APIS', template_mode='bootstrap3', index_view=MyAdminIndexView())
     
-    admin.add_view(ModelView(User, session))
-    admin.add_view(ModelView(Token, session))
+    admin.add_view(DefaultModelView(User, session))
+    admin.add_view(DefaultModelView(Token, session))
     admin.add_link(LogoutMenuLink(name='Logout', category='', url="/admin/logout"))
