@@ -22,18 +22,19 @@ class DefaultModelView(ModelView):
 
     def is_accessible(self):
         return adminLogin.current_user.is_authenticated and adminLogin.current_user.is_active
-
-    def inaccessible_callback(self, name, **kwargs):
-        # redirect to login page if user doesn't have access
-        return redirect(url_for('admin.login', next=request.url))
+    
+    def _handle_view(self, name, **kwargs):
+        if not self.is_accessible():
+            return redirect(url_for('admin.login'))
     
 class MyAdminIndexView(AdminIndexView):
-    def is_accessible(self):
-        return adminLogin.current_user.is_authenticated and adminLogin.current_user.is_active
+    # def is_accessible(self):
+    #     return adminLogin.current_user.is_authenticated
     
-    def inaccessible_callback(self, name, **kwargs):
-        # redirect to login page if user doesn't have access
-        return redirect(url_for('admin.login', next=request.url))
+    # def _handle_view(self, name, **kwargs):
+    #     print(name, kwargs, self.is_accessible())
+    #     if self.is_accessible():
+    #         return redirect(url_for('admin.login'))
 
     @expose('/')
     def index(self):
