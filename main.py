@@ -8,7 +8,30 @@ from app.api import blueprint
 
 from utils.helper import APIResponse, mail
 
+from celery import Celery
+from celery.schedules import crontab
+
 import os
+
+celery = Celery(
+    __name__,
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
+    include=['app.tasks']
+)
+
+celery.conf.beat_schedule = {
+    'load_data_at_10': {
+        'task': 'load_mandi_data',
+        'schedule': crontab(hour=10, minute=0)      # daily 10 AM
+    },
+    'load_data_at_4': {
+        'task': 'load_mandi_data',
+        'schedule': crontab(hour=16, minute=0)      # daily 4 PM
+    }
+}
+
+celery.conf.timezone = 'Asia/Kolkata'
 
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/templates')
 static_dir   = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'core/static')
