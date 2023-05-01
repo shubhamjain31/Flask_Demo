@@ -6,8 +6,8 @@ from core.database.connection import session
 from wsgi import app
 
 
-@shared_task(name="load_mandi_data")
-def load_mandi_data():
+@shared_task(name="test_beat")
+def test_beat():
     with app.app_context():
         pass
         

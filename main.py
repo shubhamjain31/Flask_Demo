@@ -22,12 +22,8 @@ celery = Celery(
 
 celery.conf.beat_schedule = {
     'load_data_at_10': {
-        'task': 'load_mandi_data',
-        'schedule': crontab(hour=10, minute=0)      # daily 10 AM
-    },
-    'load_data_at_4': {
-        'task': 'load_mandi_data',
-        'schedule': crontab(hour=16, minute=0)      # daily 4 PM
+        'task': 'test_beat',
+        'schedule': crontab(minute='*/1')
     }
 }
 
