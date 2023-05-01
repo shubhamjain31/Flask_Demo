@@ -24,5 +24,7 @@ class Settings(object):
     MAIL_USERNAME: str      = ""
     MAIL_PASSWORD: str      = ""
     MAIL_FROM: str          = ""
+    CELERY_BROKER_URL       = 'redis://localhost:6379'
+    CELERY_RESULT_BACKEND   = 'redis://localhost:6379'
 
 settings = Settings()
