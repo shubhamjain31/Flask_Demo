@@ -1,7 +1,7 @@
 from main import get_application
 from flask import jsonify
 
-from decouple import config
+from config import settings
 from utils.helper import ValidationException
 from core.database.admin import admin_panel
 from core.database.models import User
@@ -32,4 +32,4 @@ def handle_validation_exception(exc):
     )
 
 if __name__ == '__main__':
-    app.run(debug=config("DEBUG"))
+    app.run(debug=settings.DEBUG)
