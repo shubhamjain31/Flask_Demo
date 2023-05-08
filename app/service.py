@@ -166,7 +166,6 @@ class UserAuthentication:
         self.model = model
 
     def check_user(self, user: dict, tbl: Session) -> Tuple[bool, str]:
-        print(user)
         user_obj = tbl.query(self.model).filter_by(email=user['email']).first()
 
         exists = user_obj is not None and user_obj.verify_password(user['password'])
