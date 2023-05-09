@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 
 from core.database.connection import session
-from app.service import user, authenticate
+from app.service import user, authenticate, post
 
 from utils.decorators import token_required
 from utils.helper import send_email
@@ -72,3 +72,45 @@ def password_change(current_user, userId: str):
 def user_logout(current_user: str):
     response = authenticate.logout(user_=current_user, tbl=session)
     return {"status":200, "message":'User Logout Successfully!', "data": response}, 200
+
+@blueprint.route("/create-post", methods=["POST"])
+@token_required
+def post_create(current_user: str):
+    data = request.get_json()
+    response = post.create(post=data, tbl=session, user=current_user, ip_address=request.remote_addr, user_agent=request.headers.get('User-Agent'))
+    return {"status":201, "message":'Post Created!', "data": response}, 201
+
+# @router.put("/update-post/{postId}", dependencies=[Depends(JWTBearer())],)
+# def edit_post(post_: PostUpdate, request: Request, postId: str, db: Session = Depends(get_db)):
+#     data = post.update(post=jsonify(post_.dict(), 
+#                                     request.client.host, 
+#                                     request.headers['user-agent']
+#                                     ), 
+#                                     id=postId, 
+#                                     db=db
+#                         )
+#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Updated!')
+
+# @router.get("/posts", response_model=Post, dependencies=[Depends(JWTBearer())],)
+# def posts(request: Request, db: Session = Depends(get_db)):
+#     params = dict(request.query_params)
+    
+#     try:
+#         limit   = int(params.get('limit', 200))
+#         offset  = int(params.get('offset', 0))
+#     except:
+#         return ResponseJSON({}, status_code=status.HTTP_400_BAD_REQUEST, message='Invalid query parameters values!')
+    
+#     data = post.get_multiple(db=db, limit=limit, offset=offset)
+#     # test_celery.delay()
+#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='All Posts!')
+
+# @router.get("/post/{userId}", response_model=Post, dependencies=[Depends(JWTBearer())],)
+# def post_(userId: str, db: Session = Depends(get_db)):
+#     data = post.get(id=userId, db=db)
+#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Info!')
+
+# @router.delete("/delete-post/{postId}", response_model=Post, dependencies=[Depends(JWTBearer())],)
+# def delete_post(postId: str, db: Session = Depends(get_db)):
+#     data = post.delete(id=postId, db=db)
+#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Deleted!')

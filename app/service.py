@@ -1,10 +1,10 @@
-from core.database.models import User, Token
+from core.database.models import User, Token, Post
 
 from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple, Dict
 
 from utils.helper import ValidationException, generate_username
-from core.schemas.model_schema import user_schema, users_schema
+from core.schemas.model_schema import user_schema, users_schema, post_schema
 from app.authentication import signJWT, decodeJWT
 from core.database.connection import session
 
@@ -211,6 +211,39 @@ class UserAuthentication:
             return {}
         else:
             raise ValidationException({}, 400, "Already Logout!")
+        
+class PostCRUD:
+    """
+    CRUD Operation for post.
+    """
+
+    def __init__(self, model):
+        self.model = model
+
+    def create(self, tbl: Session, post: dict, user: str, ip_address: str, user_agent: str) -> Dict:
+        """
+        Create a post.
+        """
+
+        post_query = tbl.query(self.model).filter(self.model.post_name == post['post_name'])
+        exists = post_query.one_or_none()
+
+        if exists is not None:
+            raise ValidationException({}, 400, f'Post with this name already exists!')
+        
+        post_obj = self.model(post_name=post['post_name'], 
+                              post_text=post['post_text'], 
+                              ip_address=post['ip_address'], 
+                              user_agent=post['user_agent'], 
+                              user_id=user
+                              )
+
+        # tbl.add(post_obj)
+        # tbl.commit()
+        # tbl.refresh(post_obj)
+        return post_schema.dump(post_obj)
+        
     
 user                = UserCRUD(User) 
 authenticate        = UserAuthentication(User) 
+post                = PostCRUD(Post) 

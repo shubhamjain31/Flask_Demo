@@ -43,3 +43,17 @@ class Token(Base):
 
     def __repr__(self):
         return self.email
+    
+class Post(BaseModel, Base):
+    __tablename__ = "posts"
+
+    id              = Column(Integer, primary_key=True, index=True)
+    user_id         = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    post_name       = Column(String, unique=True, index=True)
+    post_text       = Column(Text)
+    created_at      = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at      = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    owner           = relationship("User", backref=backref("posts", uselist=False))
+
+    def __repr__(self):
+        return self.post_name 
