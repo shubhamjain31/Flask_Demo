@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional, Type, TypeVar, Tuple, Dict
 
 from utils.helper import ValidationException, generate_username
-from core.schemas.model_schema import user_schema, users_schema, post_schema
+from core.schemas.model_schema import user_schema, users_schema, post_schema, posts_schema
 from app.authentication import signJWT, decodeJWT
 from core.database.connection import session
 
@@ -220,6 +220,26 @@ class PostCRUD:
     def __init__(self, model):
         self.model = model
 
+    def get_multiple(self, tbl: Session, limit:int = 100, offset: int = 0) -> List:
+        """
+        Get multiple posts using a query limiting flag.
+        """
+        query = tbl.query(self.model).all()[offset:offset+limit]
+        if not query:
+            raise ValidationException([], 400, 'There are no posts.')
+        return posts_schema.dump(query)
+
+    def get(self, tbl: Session, id: ID) -> Optional[Dict]:
+        """
+        Get specific post using query.
+        """
+        query = tbl.query(self.model).filter(self.model.id == id).one_or_none()
+        
+        if query is None:
+            raise ValidationException({}, 400, 'Post Not Found!')
+        
+        return post_schema.dump(query)
+
     def create(self, tbl: Session, post: dict, user: str, ip_address: str, user_agent: str) -> Dict:
         """
         Create a post.
@@ -233,14 +253,14 @@ class PostCRUD:
         
         post_obj = self.model(post_name=post['post_name'], 
                               post_text=post['post_text'], 
-                              ip_address=post['ip_address'], 
-                              user_agent=post['user_agent'], 
+                              ip_address=ip_address, 
+                              user_agent=user_agent, 
                               user_id=user
                               )
 
-        # tbl.add(post_obj)
-        # tbl.commit()
-        # tbl.refresh(post_obj)
+        tbl.add(post_obj)
+        tbl.commit()
+        tbl.refresh(post_obj)
         return post_schema.dump(post_obj)
         
     

@@ -77,7 +77,7 @@ def user_logout(current_user: str):
 @token_required
 def post_create(current_user: str):
     data = request.get_json()
-    response = post.create(post=data, tbl=session, user=current_user, ip_address=request.remote_addr, user_agent=request.headers.get('User-Agent'))
+    response = post.create(post=data, tbl=session, user=current_user.id, ip_address=request.remote_addr, user_agent=request.headers.get('User-Agent'))
     return {"status":201, "message":'Post Created!', "data": response}, 201
 
 # @router.put("/update-post/{postId}", dependencies=[Depends(JWTBearer())],)
@@ -91,24 +91,25 @@ def post_create(current_user: str):
 #                         )
 #     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Updated!')
 
-# @router.get("/posts", response_model=Post, dependencies=[Depends(JWTBearer())],)
-# def posts(request: Request, db: Session = Depends(get_db)):
-#     params = dict(request.query_params)
+@blueprint.route("/posts", methods=["GET"])
+@token_required
+def posts(current_user: str):
+    params = request.args
     
-#     try:
-#         limit   = int(params.get('limit', 200))
-#         offset  = int(params.get('offset', 0))
-#     except:
-#         return ResponseJSON({}, status_code=status.HTTP_400_BAD_REQUEST, message='Invalid query parameters values!')
+    try:
+        limit   = int(params.get('limit', 200))
+        offset  = int(params.get('offset', 0))
+    except:
+        return {"status":200, "message":'Invalid query parameters values!', "data": {}}, 200
     
-#     data = post.get_multiple(db=db, limit=limit, offset=offset)
-#     # test_celery.delay()
-#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='All Posts!')
+    response = post.get_multiple(tbl=session, limit=limit, offset=offset)
+    return {"status":200, "message":'All Posts!', "data": response}, 200
 
-# @router.get("/post/{userId}", response_model=Post, dependencies=[Depends(JWTBearer())],)
-# def post_(userId: str, db: Session = Depends(get_db)):
-#     data = post.get(id=userId, db=db)
-#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Info!')
+@blueprint.route("/post/<postId>", methods=["GET"])
+@token_required
+def post_(current_user: str, postId: str):
+    response = post.get(id=postId, tbl=session)
+    return {"status":200, "message":'Specific Post!', "data": response}, 200
 
 # @router.delete("/delete-post/{postId}", response_model=Post, dependencies=[Depends(JWTBearer())],)
 # def delete_post(postId: str, db: Session = Depends(get_db)):

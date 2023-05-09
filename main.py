@@ -47,7 +47,7 @@ def get_application() -> Flask:
                 static_folder=static_dir)
     
     # secret key
-    app.secret_key = config("SECRET_KEY")
+    app.secret_key = settings.SECRET_KEY
 
     app.register_blueprint(blueprint)
 
@@ -60,6 +60,7 @@ def get_application() -> Flask:
     )
 
     # postgressql URL
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True, "pool_recycle": 300}
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URL
 
     # loading environment variable

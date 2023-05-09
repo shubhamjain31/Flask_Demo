@@ -47,6 +47,7 @@ class PostSchema(Serializer.Schema):
         model = Post
         ordered = True
         load_instance = True
+        fields = ("id", "post_name", "post_text", "user_id", "created_at", "updated_at")
 
     @post_dump
     def change_none_values(cls, data, **kwargs):
