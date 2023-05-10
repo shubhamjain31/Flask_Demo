@@ -42,9 +42,9 @@ class UserToken:
         tbl.commit()
         tbl.refresh(token_obj)
     
-    def delete(self, email: str, tbl: Session) -> bool:
+    def delete(self, token: str, tbl: Session) -> bool:
         """Delete a token."""
-        token_query = tbl.query(self.model).filter(self.model.email == email)
+        token_query = tbl.query(self.model).filter(self.model.token == token)
         token_obj = token_query.one_or_none()
         
         if token_obj is None:
