@@ -17,12 +17,12 @@ def token_required(f):
             token = request.headers['Authorization']
         # return 401 if token is not passed
         if not token:
-            return {"status":401, "message":'Invalid Token !!', "data": {}}, 401
+            return {"status":401, "message":'Token is missing !!!', "data": {}}, 401
   
         try:
             check_token = session.query(Token).filter_by(token = token).first()
             if check_token is None:
-                return {"status":401, "message":'Token is invalid !!', "data": {}}, 401
+                return {"status":401, "message":'Invalid Token !!', "data": {}}, 401
             
             # decoding the payload to fetch the stored details
             data = decodeJWT(token)
