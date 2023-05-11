@@ -262,6 +262,26 @@ class PostCRUD:
         tbl.commit()
         tbl.refresh(post_obj)
         return post_schema.dump(post_obj)
+    
+    def update(self, post: dict, id: ID, tbl: Session, ip_address: str, user_agent: str, user: str) -> Post:
+        """
+        Update a post.
+        """
+        post_query = tbl.query(self.model).filter(self.model.id == id)
+        post_obj = post_query.one_or_none()
+
+        if post_obj is None:
+            raise ValidationException({}, 400, f'No post with this id: {id} found')
+        
+        post['user_id'] = user
+        post['ip_address'] = ip_address
+        post['user_agent'] = user_agent
+        
+        post_query.filter(self.model.id == id).update(post,
+                                                        synchronize_session=False)
+        tbl.commit()
+        tbl.refresh(post_obj)
+        return post_schema.dump(post_obj)
         
     
 user                = UserCRUD(User) 

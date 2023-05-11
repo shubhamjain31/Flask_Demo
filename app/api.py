@@ -80,16 +80,12 @@ def post_create(current_user: str):
     response = post.create(post=data, tbl=session, user=current_user.id, ip_address=request.remote_addr, user_agent=request.headers.get('User-Agent'))
     return {"status":201, "message":'Post Created!', "data": response}, 201
 
-# @router.put("/update-post/{postId}", dependencies=[Depends(JWTBearer())],)
-# def edit_post(post_: PostUpdate, request: Request, postId: str, db: Session = Depends(get_db)):
-#     data = post.update(post=jsonify(post_.dict(), 
-#                                     request.client.host, 
-#                                     request.headers['user-agent']
-#                                     ), 
-#                                     id=postId, 
-#                                     db=db
-#                         )
-#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Updated!')
+@blueprint.route("/update-post/<postId>", methods=["PUT"])
+@token_required
+def edit_post(current_user: str, postId: str):
+    data = request.get_json()
+    response = post.update(id=postId, post=data, user=current_user.id, tbl=session, ip_address=request.remote_addr, user_agent=request.headers.get('User-Agent'))
+    return {"status":200, "message":'Post Updated!', "data": response}, 200
 
 @blueprint.route("/posts", methods=["GET"])
 @token_required
