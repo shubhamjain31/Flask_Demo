@@ -282,6 +282,19 @@ class PostCRUD:
         tbl.commit()
         tbl.refresh(post_obj)
         return post_schema.dump(post_obj)
+    
+    def delete(self, id: ID, tbl: Session) -> Post:
+        """Delete a post."""
+        post_query = tbl.query(self.model).filter(self.model.id == id)
+        post_obj = post_query.one_or_none()
+        
+        if post_obj is None:
+            raise ValidationException({}, 404, f'No Post with this id: {id} found')
+        
+        post_query.delete(synchronize_session=False)
+        tbl.commit()
+        return {}
+
         
     
 user                = UserCRUD(User) 

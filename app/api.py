@@ -107,7 +107,8 @@ def post_(current_user: str, postId: str):
     response = post.get(id=postId, tbl=session)
     return {"status":200, "message":'Specific Post!', "data": response}, 200
 
-# @router.delete("/delete-post/{postId}", response_model=Post, dependencies=[Depends(JWTBearer())],)
-# def delete_post(postId: str, db: Session = Depends(get_db)):
-#     data = post.delete(id=postId, db=db)
-#     return ResponseJSON(data, status_code=status.HTTP_200_OK, message='Post Deleted!')
+@blueprint.route("/delete-post/<postId>", methods=["DELETE"])
+@token_required
+def delete_post(current_user: str, postId: str):
+    response = post.delete(id=postId, tbl=session)
+    return {"status":200, "message":'Post Deleted!', "data": response}, 200
