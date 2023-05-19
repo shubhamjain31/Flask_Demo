@@ -62,7 +62,7 @@ class UserCRUD:
     def __init__(self, model):
         self.model = model
         
-    def get_multiple(self, tbl: Session, limit:int = 100, offset: int = 0) -> List:
+    def get_multiple(self, tbl: Session, limit:int, offset: int = 0) -> List:
         """
         Get multiple users using a query limiting flag.
         """
@@ -220,7 +220,7 @@ class PostCRUD:
     def __init__(self, model):
         self.model = model
 
-    def get_multiple(self, tbl: Session, limit:int = 100, offset: int = 0) -> List:
+    def get_multiple(self, tbl: Session, limit:int, offset: int = 0) -> List:
         """
         Get multiple posts using a query limiting flag.
         """
